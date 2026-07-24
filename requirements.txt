@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pytesseract
+pdf2image
+transformers
+sentence-transformers
+faiss-cpu
+torch
+opencv-python
+requests
+python-dotenv
