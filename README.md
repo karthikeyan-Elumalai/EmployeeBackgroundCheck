@@ -1,5 +1,7 @@
 # Employee Background Check — Prototype
 
+[![Python application](https://github.com/karthikeyan-Elumalai/EmployeeBackgroundCheck/actions/workflows/python-app.yml/badge.svg)](https://github.com/karthikeyan-Elumalai/EmployeeBackgroundCheck/actions/workflows/python-app.yml)
+
 This repository contains a minimal scaffold for the AI-Powered Employee Background Check project (open-source-only).
 
 ## Project Overview
