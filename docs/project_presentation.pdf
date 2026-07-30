@@ -1,0 +1,217 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R 8 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Length 5995 >>
+stream
+BT
+1 0 0 1 54 753.89 Tm
+/F2 24 Tf
+(Project Explain) Tj
+1 0 0 1 54 727.89 Tm
+/F1 12 Tf
+(Employee Background Check and Resume Analysis System) Tj
+1 0 0 1 54 707.89 Tm
+T*
+1 0 0 1 54 696.89 Tm
+/F1 11 Tf
+(A local-first AI workflow for HR document screening, verification, and reporting.) Tj
+1 0 0 1 54 680.89 Tm
+T*
+1 0 0 1 54 662.89 Tm
+/F2 14 Tf
+(Project Overview) Tj
+1 0 0 1 54 645.89 Tm
+/F1 11 Tf
+(This project is a local-first AI-assisted employee background check and resume analysis) Tj
+1 0 0 1 54 632.89 Tm
+/F1 11 Tf
+(system. It accepts uploaded documents, extracts text with OCR, verifies key fields, performs) Tj
+1 0 0 1 54 619.89 Tm
+/F1 11 Tf
+(retrieval against a local corpus, runs external verification connectors, assigns a risk) Tj
+1 0 0 1 54 606.89 Tm
+/F1 11 Tf
+(score, generates a report, stores the case in SQLite, and shows the result in a dashboard) Tj
+1 0 0 1 54 593.89 Tm
+/F1 11 Tf
+(for HR review.) Tj
+1 0 0 1 54 577.89 Tm
+T*
+1 0 0 1 54 559.89 Tm
+/F2 14 Tf
+(Architecture) Tj
+1 0 0 1 54 542.89 Tm
+/F1 11 Tf
+(The logical architecture is: User or HR Portal -> Document Upload Layer -> OCR and Text) Tj
+1 0 0 1 54 529.89 Tm
+/F1 11 Tf
+(Processing -> Data Normalization -> Verification Engine -> Fraud Detection and Risk Scoring) Tj
+1 0 0 1 54 516.89 Tm
+/F1 11 Tf
+(-> Human Review if needed -> Report Generation -> HR Dashboard and System Storage.) Tj
+1 0 0 1 54 500.89 Tm
+T*
+1 0 0 1 54 482.89 Tm
+/F2 14 Tf
+(End-to-End Flow) Tj
+1 0 0 1 54 465.89 Tm
+/F1 11 Tf
+(1. The user uploads a text file, image, or PDF through the demo page or API.) Tj
+1 0 0 1 54 452.89 Tm
+/F1 11 Tf
+(2. The file is saved locally in data/uploads.) Tj
+1 0 0 1 54 439.89 Tm
+/F1 11 Tf
+(3. OCR or text extraction produces raw_text, fields, and confidence.) Tj
+1 0 0 1 54 426.89 Tm
+/F1 11 Tf
+(4. Field verification checks required values such as name, date, and ID number.) Tj
+1 0 0 1 54 413.89 Tm
+/F1 11 Tf
+(5. The retrieval layer searches the local corpus for related text.) Tj
+1 0 0 1 54 400.89 Tm
+/F1 11 Tf
+(6. External verification connectors run in mock mode by default or live mode when configured.) Tj
+1 0 0 1 54 387.89 Tm
+/F1 11 Tf
+(7. Fraud signals and risk score are calculated.) Tj
+1 0 0 1 54 374.89 Tm
+/F1 11 Tf
+(8. A report is produced using template mode or Ollama mode.) Tj
+1 0 0 1 54 361.89 Tm
+/F1 11 Tf
+(9. The case is stored in SQLite.) Tj
+1 0 0 1 54 348.89 Tm
+/F1 11 Tf
+(10. The dashboard displays totals, review queue items, charts, and recent cases.) Tj
+1 0 0 1 54 332.89 Tm
+T*
+1 0 0 1 54 314.89 Tm
+/F2 14 Tf
+(Files and Responsibilities) Tj
+1 0 0 1 54 297.89 Tm
+/F1 11 Tf
+(src/app.py is the orchestration layer. It exposes the FastAPI routes, initializes the database on startup, stores uploads, combines OCR, retrieval, external verification, report generation, resume insights, and persistence, and exposes the review and dashboard endpoints.) Tj
+1 0 0 1 54 284.89 Tm
+/F1 11 Tf
+(src/ocr.py handles extraction and analysis. It supports text, image, and PDF input, extracts fields, builds verification output, flags fraud signals, calculates risk, and creates the template background report.) Tj
+1 0 0 1 54 271.89 Tm
+/F1 11 Tf
+(src/rag.py provides local retrieval. It loads corpus text, builds an in-memory embedding index, and returns similar documents for the current upload.) Tj
+1 0 0 1 54 258.89 Tm
+/F1 11 Tf
+(src/connectors.py implements the external verification skeleton. It includes mock employment and identity checks, live request retry logic, and normalized connector results.) Tj
+1 0 0 1 54 245.89 Tm
+/F1 11 Tf
+(src/llm_report.py manages optional LLM report generation. It builds the Ollama prompt, calls the local Ollama HTTP endpoint, and falls back to the template report when the LLM call fails.) Tj
+1 0 0 1 54 232.89 Tm
+/F1 11 Tf
+(src/db.py owns storage and analytics. It creates the SQLite schema, saves cases, reads cases, lists pending reviews, applies review decisions, and computes dashboard summary metrics.) Tj
+1 0 0 1 54 219.89 Tm
+/F1 11 Tf
+(src/insights.py parses resume text for dashboard charts. It extracts experience buckets, education buckets, and top skills from resume text.) Tj
+1 0 0 1 54 206.89 Tm
+/F1 11 Tf
+(src/templates/upload.html is the demo analyzer page. It has the upload form, report-only form, and output sections for assessment, external verification, report text, and raw JSON.) Tj
+1 0 0 1 54 193.89 Tm
+/F1 11 Tf
+(src/templates/dashboard.html is the HR dashboard page. It shows KPI cards, a review overview, recent cases, and charts for experience, education, and top skills.) Tj
+1 0 0 1 54 180.89 Tm
+/F1 11 Tf
+(docs/DESIGN.md explains the intended logical architecture, the local-first model policy, and why Ollama and MiniLM are preferred.) Tj
+1 0 0 1 54 167.89 Tm
+/F1 11 Tf
+(docs/MODEL_SELECTION_REPORT.md explains the model choice tradeoffs and why sentence-transformers/all-MiniLM-L6-v2 is the preferred retrieval model.) Tj
+1 0 0 1 54 151.89 Tm
+T*
+1 0 0 1 54 133.89 Tm
+/F2 14 Tf
+(Ollama) Tj
+1 0 0 1 54 116.89 Tm
+/F1 11 Tf
+(src/llm_report.py is the Ollama integration point.) Tj
+1 0 0 1 54 103.89 Tm
+/F1 11 Tf
+(If REPORT_GENERATION_MODE is not set to ollama, the system uses the template report immediately.) Tj
+1 0 0 1 54 90.89 Tm
+/F1 11 Tf
+(If REPORT_GENERATION_MODE=ollama, the code sends a POST request to /api/generate on the local Ollama server, using OLLAMA_BASE_URL and REPORT_LLM_MODEL.) Tj
+1 0 0 1 54 77.89 Tm
+/F1 11 Tf
+(If Ollama returns an empty response, fails, or is unavailable, the system safely falls back to the template report so the workflow does not break.) Tj
+1 0 0 1 54 64.89 Tm
+/F1 11 Tf
+(This keeps the project local-first and allows demo continuity even when the model server is down.) Tj
+1 0 0 1 54 48.89 Tm
+T*
+1 0 0 1 54 30.89 Tm
+/F2 14 Tf
+(Dashboard Behavior) Tj
+1 0 0 1 54 13.89 Tm
+/F1 11 Tf
+(src/templates/dashboard.html renders the HR dashboard UI. It fetches /dashboard/summary to) Tj
+1 0 0 1 54 0.89 Tm
+/F1 11 Tf
+(populate the KPI cards, recent cases, and aggregate insight data. After a fresh upload, it) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Length 857 >>
+stream
+BT
+1 0 0 1 54 776.89 Tm
+/F1 11 Tf
+(also replaces the charts with the latest upload?s resume_insights so the user immediately) Tj
+1 0 0 1 54 763.89 Tm
+/F1 11 Tf
+(sees that resume?s experience, education, and top skills.) Tj
+1 0 0 1 54 747.89 Tm
+T*
+1 0 0 1 54 729.89 Tm
+/F2 14 Tf
+(Demo Story) Tj
+1 0 0 1 54 712.89 Tm
+/F1 11 Tf
+(A strong demo sequence is: open the dashboard, upload a resume, show the extracted assessment and charts, upload a missing-fields sample to trigger review behavior, inspect the pending review queue, and mention that report generation can use either the template path or local Ollama.) Tj
+1 0 0 1 54 699.89 Tm
+/F1 11 Tf
+(The project demonstrates an end-to-end document analysis workflow with OCR, retrieval, verification, risk scoring, human review, dashboard reporting, and optional local LLM output.) Tj
+1 0 0 1 54 683.89 Tm
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000266 00000 n 
+0000006313 00000 n 
+0000007221 00000 n 
+0000007363 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R >>
+startxref
+7505
+%%EOF

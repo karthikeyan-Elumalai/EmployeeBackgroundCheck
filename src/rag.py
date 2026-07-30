@@ -1,3 +1,4 @@
+import glob
 import os
 from typing import List
 
@@ -18,6 +19,7 @@ _MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 _model = None
 _index = None
 _documents: List[str] = []
+CORPUS_DIR = os.path.join("data", "corpus")
 
 
 def _ensure_model():
@@ -29,20 +31,40 @@ def _ensure_model():
     return _model
 
 
+def load_corpus(corpus_dir: str | None = None) -> List[str]:
+    corpus_path = corpus_dir or CORPUS_DIR
+    if not os.path.isdir(corpus_path):
+        return []
+
+    documents: List[str] = []
+    for path in sorted(glob.glob(os.path.join(corpus_path, "*.txt"))):
+        try:
+            with open(path, "r", encoding="utf-8") as handle:
+                documents.append(handle.read())
+        except Exception:
+            continue
+    return documents
+
+
 def build_index(doc_texts: List[str]):
     """Build an in-memory index from a list of document texts (demo use)."""
     global _index, _documents
-    _documents = doc_texts
+    _documents = [doc for doc in doc_texts if doc]
 
     model = _ensure_model()
-    if model is None or faiss is None:
+    if model is None or faiss is None or not _documents:
         _index = None
         return
 
-    embeddings = model.encode(doc_texts, convert_to_numpy=True)
+    embeddings = model.encode(_documents, convert_to_numpy=True)
     dim = embeddings.shape[1]
     _index = faiss.IndexFlatL2(dim)
     _index.add(embeddings)
+
+
+def build_index_from_corpus(extra_texts: List[str] | None = None, corpus_dir: str | None = None):
+    corpus_texts = load_corpus(corpus_dir)
+    build_index((extra_texts or []) + corpus_texts)
 
 
 def retrieve(query: str, k: int = 5) -> List[str]:

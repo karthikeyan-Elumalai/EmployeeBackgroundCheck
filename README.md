@@ -27,6 +27,11 @@ Organizations often face slow, manual, and fragmented background verification pr
 - Governance and compliance controls
 - Phased rollout strategy
 
+### Demo readiness
+- The app includes a simple browser demo UI at `/demo`
+- Upload `txt`, image, or PDF files and view the structured JSON output plus risk assessment and generated report
+- Demo shows OCR extraction, verification rules, retrieval behavior, risk scoring, and report generation
+
 Quick start:
 
 1. Create a Python virtualenv and install dependencies: see `requirements.txt`.
@@ -37,7 +42,9 @@ venv\Scripts\Activate.ps1`.
    - On Windows, install from https://github.com/tesseract-ocr/tesseract or use Chocolatey.
    - For PDF OCR, install Poppler and ensure `pdftoppm` is on your PATH.
 3. Run the API (FastAPI): `python -m uvicorn src.app:app --reload`.
-4. See `demo/demo_instructions.md` for the live demo steps.
+5. Open the browser demo at `http://127.0.0.1:8000/demo`.
+6. Use `POST /report` to generate a dedicated assessment report from a document upload.
+7. See `demo/demo_flow.md` for the live demo steps.
 
 Model usage policy:
 - Use open-source models only for this project.

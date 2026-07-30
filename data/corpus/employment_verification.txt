@@ -1,0 +1,6 @@
+Full Name: Jane Smith
+Date of Birth: 03/05/1990
+Document Type: Passport
+Passport Number: P-889912
+Employment Status: Active
+Employer: Acme Corp

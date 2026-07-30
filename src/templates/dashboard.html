@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HR Resume Review Dashboard</title>
+  <style>
+    :root {
+      --bg: #f3f1eb;
+      --card: #fffdf9;
+      --text: #1d2128;
+      --muted: #5e6570;
+      --line: #d9d2c7;
+      --primary: #0f4c5c;
+      --accent: #d97706;
+      --ok: #1f7a4d;
+      --warn: #b45309;
+      --risk: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% -10%, #c6dbdf 0%, transparent 35%),
+        radial-gradient(circle at 95% 0%, #f8d8a8 0%, transparent 34%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero {
+      background: linear-gradient(125deg, #12313b, #0f4c5c);
+      color: #fff;
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      box-shadow: 0 10px 24px rgba(15, 76, 92, 0.24);
+    }
+
+    .hero h1 {
+      margin: 0 0 0.3rem;
+      font-size: 1.35rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #d8edf1;
+      font-size: 0.95rem;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 6px 20px rgba(29, 33, 40, 0.07);
+    }
+
+    .panel h2 {
+      margin: 0 0 0.7rem;
+      font-size: 1.05rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .actions button,
+    .actions a {
+      border: none;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      padding: 0.55rem 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .actions a { background: var(--accent); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.7rem;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.65rem;
+      background: #fff;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .stat .value {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 980px) {
+      .grid {
+        grid-template-columns: 1.1fr 1fr;
+      }
+    }
+
+    form {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    input[type="file"] {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 0.45rem;
+    }
+
+    button[type="submit"] {
+      border: none;
+      border-radius: 10px;
+      background: var(--ok);
+      color: #fff;
+      padding: 0.55rem 0.8rem;
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    pre {
+      margin: 0;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #f8f6f2;
+      max-height: 280px;
+      overflow: auto;
+      white-space: pre-wrap;
+      font-family: Consolas, monospace;
+      font-size: 0.83rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.55rem;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.86rem;
+      vertical-align: top;
+    }
+
+    th {
+      background: #efe9df;
+      color: #3b4250;
+      font-weight: 600;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 12px;
+      padding: 0.12rem 0.45rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+      background: #6b7280;
+    }
+
+    .tag.approve { background: var(--ok); }
+    .tag.review { background: var(--warn); }
+    .tag.manual_review { background: var(--risk); }
+    .muted { color: var(--muted); }
+
+    .charts {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 980px) {
+      .charts {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .chart-block h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.95rem;
+      color: #2f3742;
+    }
+
+    .bars {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 84px 1fr 34px;
+      gap: 0.4rem;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 20px;
+      background: #ece6da;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #0f4c5c, #2a8ca3);
+      transition: width 300ms ease;
+    }
+
+    .skills-list {
+      margin: 0;
+      padding-left: 1rem;
+      font-size: 0.82rem;
+      color: #29313d;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .skills-list li {
+      margin: 0.2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>HR Resume Review Dashboard</h1>
+      <p>Upload resumes, run checks, and monitor recommendations and review workload.</p>
+    </section>
+
+    <section class="panel">
+      <div class="actions">
+        <button id="refresh-btn" type="button">Refresh Dashboard</button>
+        <a href="/demo" target="_blank" rel="noopener">Open Full Analyzer</a>
+      </div>
+      <div class="stats" id="stats-grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Primary Resume Analysis Factors</h2>
+      <pre id="factors-output">1) Required identity fields: Full Name, Date, ID Number
+2) Contact details: email, phone, address
+3) Employment consistency: employer, role, duration, status
+4) Verification and fraud signals
+5) External verification connector outcomes
+6) Risk score and final recommendation</pre>
+    </section>
+
+    <section class="panel">
+      <h2>Resume Insights Charts</h2>
+      <div class="charts">
+        <div class="chart-block">
+          <h3>Experience Levels</h3>
+          <div id="experience-chart" class="bars"></div>
+        </div>
+        <div class="chart-block">
+          <h3>Education Qualifications</h3>
+          <div id="education-chart" class="bars"></div>
+        </div>
+        <div class="chart-block">
+          <h3>Top Skills</h3>
+          <ol id="skills-chart" class="skills-list">
+            <li class="muted">No skills detected yet.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Upload Resume (HR Check)</h2>
+        <form id="upload-form" enctype="multipart/form-data">
+          <input type="file" name="file" id="file-input" required />
+          <button type="submit">Analyze Resume</button>
+        </form>
+        <p class="muted">Latest analysis result</p>
+        <pre id="analysis-output">Upload a resume to see analysis result.</pre>
+      </div>
+
+      <div class="panel">
+        <h2>Recent Cases</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>File</th>
+              <th>Risk</th>
+              <th>Recommendation</th>
+              <th>Review</th>
+            </tr>
+          </thead>
+          <tbody id="recent-cases-body">
+            <tr>
+              <td colspan="5" class="muted">No data yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const statsGrid = document.getElementById('stats-grid');
+    const recentBody = document.getElementById('recent-cases-body');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const uploadForm = document.getElementById('upload-form');
+    const analysisOutput = document.getElementById('analysis-output');
+    const experienceChart = document.getElementById('experience-chart');
+    const educationChart = document.getElementById('education-chart');
+    const skillsChart = document.getElementById('skills-chart');
+
+    const statItems = (data) => [
+      { label: 'Total Cases', value: data.total_cases },
+      { label: 'Pending Reviews', value: data.pending_reviews },
+      { label: 'Approved Cases', value: data.approved_cases },
+      { label: 'Rejected Cases', value: data.rejected_cases },
+      { label: 'Avg Risk Score', value: data.avg_risk_score },
+      { label: 'High Risk Cases', value: data.risk_distribution.high_risk },
+      { label: 'Medium Risk Cases', value: data.risk_distribution.medium_risk },
+      { label: 'Low Risk Cases', value: data.risk_distribution.low_risk },
+    ];
+
+    function renderStats(data) {
+      statsGrid.innerHTML = statItems(data).map(item => `
+        <div class="stat">
+          <div class="label">${item.label}</div>
+          <div class="value">${item.value}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderRecentCases(cases) {
+      if (!cases.length) {
+        recentBody.innerHTML = '<tr><td colspan="5" class="muted">No cases available.</td></tr>';
+        return;
+      }
+
+      recentBody.innerHTML = cases.map(item => {
+        const recommendation = item.recommendation || 'n/a';
+        const tagClass = recommendation.replace(/\s+/g, '_');
+        return `
+          <tr>
+            <td>${item.case_id}</td>
+            <td>${item.filename}</td>
+            <td>${item.risk_score}</td>
+            <td><span class="tag ${tagClass}">${recommendation}</span></td>
+            <td>${item.review_status}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderBarChart(container, values) {
+      const maxValue = Math.max(1, ...Object.values(values));
+      container.innerHTML = Object.entries(values).map(([label, value]) => {
+        const width = Math.round((value / maxValue) * 100);
+        return `
+          <div class="bar-row">
+            <span>${label}</span>
+            <div class="bar-track"><div class="bar-fill" style="width: ${width}%"></div></div>
+            <strong>${value}</strong>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderSkills(skills) {
+      if (!skills || !skills.length) {
+        skillsChart.innerHTML = '<li class="muted">No skills detected yet.</li>';
+        return;
+      }
+      skillsChart.innerHTML = skills.map(item => `<li>${item.skill} (${item.count})</li>`).join('');
+    }
+
+    function renderTalentInsights(data) {
+      const insights = data.talent_insights || {};
+      const experience = insights.experience_levels || { entry: 0, mid: 0, senior: 0, unknown: 0 };
+      const education = insights.education_levels || { phd: 0, masters: 0, bachelors: 0, diploma_or_other: 0, unknown: 0 };
+      renderBarChart(experienceChart, experience);
+      renderBarChart(educationChart, education);
+      renderSkills(insights.top_skills || []);
+    }
+
+    async function loadDashboard(options = { renderInsights: true }) {
+      try {
+        const response = await fetch('/dashboard/summary?recent_limit=10');
+        const data = await response.json();
+        renderStats(data);
+        renderRecentCases(data.recent_cases || []);
+        if (options.renderInsights) {
+          renderTalentInsights(data);
+        }
+      } catch (error) {
+        analysisOutput.textContent = `Failed to load dashboard summary: ${error.message}`;
+      }
+    }
+
+    uploadForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const fileInput = document.getElementById('file-input');
+      if (!fileInput.files.length) {
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      analysisOutput.textContent = 'Analyzing resume...';
+
+      try {
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await response.json();
+        analysisOutput.textContent = JSON.stringify({
+          case_id: data.case_id,
+          filename: data.filename,
+          verification: data.verification,
+          recommendation: data.assessment.recommendation,
+          risk_score: data.assessment.risk_score,
+          resume_insights: data.resume_insights,
+          report_generation: data.report_generation,
+        }, null, 2);
+        await loadDashboard({ renderInsights: false });
+        renderTalentInsights({ talent_insights: data.resume_insights });
+      } catch (error) {
+        analysisOutput.textContent = `Resume analysis failed: ${error.message}`;
+      }
+    });
+
+    refreshBtn.addEventListener('click', loadDashboard);
+    loadDashboard();
+  </script>
+</body>
+</html>

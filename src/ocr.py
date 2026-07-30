@@ -189,29 +189,152 @@ def extract_key_fields(text: str) -> Dict[str, str | None]:
 
 
 def build_verification(fields: Dict[str, str | None], raw_text: str) -> Dict[str, object]:
-    """Create a lightweight verification summary for the extracted fields."""
+    """Create a lightweight verification summary for extracted fields."""
     required_fields = ["name", "date", "id_number"]
     missing = [field for field in required_fields if not (fields.get(field) or "")]
+    issues = []
 
     if not raw_text:
         return {
             "status": "needs_review",
             "missing_fields": required_fields,
+            "issues": ["No text was extracted from the document."],
             "message": "No text was extracted from the document.",
         }
 
-    if not missing and fields.get("document_type"):
-        return {
-            "status": "passed",
-            "missing_fields": [],
-            "message": "Core fields were extracted successfully.",
-        }
+    if missing:
+        issues.append(f"Missing required fields: {', '.join(missing)}")
+
+    if fields.get("date") and fields.get("document_type"):
+        date = fields.get("date", "")
+        if re.search(r"\b\d{2}[\./]\d{2}[\./]\d{4}\b", date):
+            year = int(re.findall(r"\d{4}", date)[-1]) if re.findall(r"\d{4}", date) else None
+            if year and (year < 1900 or year > 2026):
+                issues.append("Extracted date is outside expected range.")
+
+    if fields.get("id_number") and fields.get("document_type"):
+        id_value = fields["id_number"]
+        if fields["document_type"] == "Passport" and not re.search(r"[0-9A-Za-z-]{5,}", id_value):
+            issues.append("Passport ID looks malformed.")
+
+    status = "passed" if not issues else "needs_review"
+    return {
+        "status": status,
+        "missing_fields": missing,
+        "issues": issues,
+        "message": "Document requires review." if issues else "Core fields were extracted successfully.",
+    }
+
+
+def build_fraud_signals(fields: Dict[str, str | None], verification: Dict[str, object], raw_text: str, confidence: float, retrieved: List[str]) -> List[str]:
+    signals: List[str] = []
+
+    if confidence < 55:
+        signals.append("low_ocr_confidence")
+
+    if verification["missing_fields"]:
+        signals.append("missing_required_fields")
+
+    doc_type = (fields.get("document_type") or "").lower()
+    id_number = fields.get("id_number") or ""
+    if doc_type == "passport" and id_number and not re.match(r"^[0-9A-Za-z-]{5,}$", id_number):
+        signals.append("passport_id_malformed")
+    if "driver" in doc_type and id_number and not re.match(r"^[0-9A-Za-z-]{5,}$", id_number):
+        signals.append("driver_license_id_unusual")
+
+    date_value = fields.get("date") or ""
+    if date_value:
+        year_match = re.search(r"\b(19|20)\d{2}\b", date_value)
+        if year_match:
+            year = int(year_match.group(0))
+            if year < 1900 or year > 2026:
+                signals.append("suspicious_date")
+        else:
+            signals.append("unstructured_date")
+
+    if raw_text and not retrieved:
+        signals.append("no_retrieval_matches")
+
+    return list(dict.fromkeys(signals))
+
+
+def build_risk_score(fields: Dict[str, str | None], verification: Dict[str, object], confidence: float, fraud_signals: List[str], retrieved: List[str]) -> int:
+    score = 100
+    score -= 15 * len(verification["missing_fields"])
+
+    if confidence < 55:
+        score -= 20
+    elif confidence < 70:
+        score -= 10
+
+    if not retrieved:
+        score -= 15
+
+    score -= 10 * len(fraud_signals)
+    score = max(0, min(100, score))
+    return score
+
+
+def build_background_assessment(ocr_result: Dict[str, object], retrieved: List[str]) -> Dict[str, object]:
+    fields = ocr_result["fields"]
+    verification = build_verification(fields, ocr_result["raw_text"])
+    fraud_signals = build_fraud_signals(fields, verification, ocr_result["raw_text"], ocr_result["confidence"], retrieved)
+    risk_score = build_risk_score(fields, verification, ocr_result["confidence"], fraud_signals, retrieved)
+
+    name = fields.get("name") or "Unknown"
+    matched_docs = [doc for doc in retrieved if name.lower() in doc.lower()] if name and retrieved else []
+    cross_verification = {
+        "status": "matched" if matched_docs else "unmatched",
+        "matched_documents": matched_docs[:3],
+    }
+
+    recommendation = "manual_review"
+    if risk_score >= 80 and verification["status"] == "passed":
+        recommendation = "approve"
+    elif risk_score >= 50:
+        recommendation = "review"
 
     return {
-        "status": "needs_review",
-        "missing_fields": missing,
-        "message": "Some fields are missing or need manual review.",
+        "risk_score": risk_score,
+        "recommendation": recommendation,
+        "fraud_signals": fraud_signals,
+        "cross_verification": cross_verification,
+        "external_integrations": [],
     }
+
+
+def generate_background_report(fields: Dict[str, str | None], verification: Dict[str, object], assessment: Dict[str, object], retrieved: List[str]) -> str:
+    lines = []
+    lines.append(f"Background check summary for {fields.get('name') or 'unknown applicant'}.")
+    lines.append(f"Document type: {fields.get('document_type') or 'unknown'}")
+    if fields.get('date'):
+        lines.append(f"Date reference: {fields.get('date')}")
+    if fields.get('id_number'):
+        lines.append(f"ID number: {fields.get('id_number')}")
+
+    lines.append(f"Verification status: {verification['status']}")
+    if verification['issues']:
+        lines.append(f"Issues found: {', '.join(verification['issues'])}")
+
+    lines.append(f"Risk score: {assessment['risk_score']} / 100")
+    lines.append(f"Recommendation: {assessment['recommendation'].replace('_', ' ').title()}")
+
+    if assessment['fraud_signals']:
+        lines.append(f"Fraud/anomaly signals: {', '.join(assessment['fraud_signals'])}")
+
+    if assessment['cross_verification']['matched_documents']:
+        lines.append("Cross-verification matched existing records.")
+    elif retrieved:
+        lines.append("No exact cross-verification match found in the corpus.")
+
+    if retrieved:
+        lines.append(f"Retrieved {len(retrieved)} related corpus document(s).")
+        lines.append("Top retrieved text preview:")
+        for idx, doc in enumerate(retrieved[:2], 1):
+            preview = doc.strip().replace('\n', ' ')[:160]
+            lines.append(f"  {idx}. {preview}")
+
+    return "\n".join(lines)
 
 
 def extract_text_from_image(path: str) -> Tuple[str, float]:

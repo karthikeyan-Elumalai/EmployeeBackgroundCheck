@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sequence Diagram</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --card: #ffffff;
+      --line: #a8b3bf;
+      --accent: #195c70;
+      --text: #1f3445;
+      --muted: #66727d;
+    }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+    }
+    .wrap {
+      width: 2200px;
+      height: 1500px;
+      position: relative;
+      margin: 0 auto;
+      overflow: hidden;
+      background: linear-gradient(180deg, #f9f7f2 0%, #f5efe5 100%);
+    }
+    .title {
+      position: absolute;
+      left: 60px;
+      top: 36px;
+      font-size: 34px;
+      font-weight: 700;
+    }
+    .subtitle {
+      position: absolute;
+      left: 62px;
+      top: 84px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .participant {
+      position: absolute;
+      top: 150px;
+      width: 220px;
+      height: 68px;
+      margin-left: -110px;
+      border: 2px solid #b1bcc7;
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .lifeline {
+      position: absolute;
+      top: 218px;
+      width: 2px;
+      bottom: 120px;
+      background: repeating-linear-gradient(
+        to bottom,
+        var(--line),
+        var(--line) 8px,
+        transparent 8px,
+        transparent 18px
+      );
+      opacity: 0.75;
+    }
+    .msg {
+      position: absolute;
+      height: 58px;
+      border: 2px solid #b7c3cd;
+      background: #f0f7fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 15px;
+      line-height: 1.2;
+      box-sizing: border-box;
+      padding: 4px 10px;
+      border-radius: 10px;
+      color: var(--text);
+      z-index: 3;
+      white-space: pre-line;
+    }
+    .msg.alt { background: #f7fbfd; }
+    .note {
+      position: absolute;
+      left: 90px;
+      right: 90px;
+      background: #ffffff;
+      border: 2px solid #b7c3cd;
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.4;
+      padding: 16px 18px;
+      box-sizing: border-box;
+    }
+    .note.top { top: 215px; }
+    .note.bottom { bottom: 70px; }
+    svg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .legend {
+      position: absolute;
+      left: 92px;
+      bottom: 28px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">Employee Background Check and Resume Analysis</div>
+    <div class="subtitle">Sequence Diagram - exact request/response flow</div>
+
+    <div class="participant" style="left: 160px;">HR User</div>
+    <div class="participant" style="left: 410px;">UI / Dashboard</div>
+    <div class="participant" style="left: 710px;">FastAPI app.py</div>
+    <div class="participant" style="left: 1010px;">OCR / ocr.py</div>
+    <div class="participant" style="left: 1310px;">RAG / rag.py</div>
+    <div class="participant" style="left: 1600px;">External Connectors</div>
+    <div class="participant" style="left: 1865px;">Ollama / LLM</div>
+    <div class="participant" style="left: 2095px;">SQLite DB</div>
+
+    <div class="lifeline" style="left: 160px;"></div>
+    <div class="lifeline" style="left: 410px;"></div>
+    <div class="lifeline" style="left: 710px;"></div>
+    <div class="lifeline" style="left: 1010px;"></div>
+    <div class="lifeline" style="left: 1310px;"></div>
+    <div class="lifeline" style="left: 1600px;"></div>
+    <div class="lifeline" style="left: 1865px;"></div>
+    <div class="lifeline" style="left: 2095px;"></div>
+
+    <div class="note top">If <b>REPORT_GENERATION_MODE=ollama</b>, FastAPI sends the prompt to the local <b>/api/generate</b> endpoint. If Ollama fails or returns empty, the template report is used automatically.</div>
+
+    <div class="msg" style="left: 110px; top: 290px; width: 210px;">1. Submit resume\nor document</div>
+    <div class="msg" style="left: 335px; top: 390px; width: 245px;">2. POST /upload\nmultipart/form-data</div>
+    <div class="msg" style="left: 675px; top: 490px; width: 240px;">3. Save uploaded file</div>
+    <div class="msg" style="left: 975px; top: 590px; width: 250px;">4. extract_document_data(path)</div>
+    <div class="msg alt" style="left: 975px; top: 680px; width: 250px;">5. raw_text + fields +\nconfidence</div>
+    <div class="msg" style="left: 975px; top: 770px; width: 250px;">6. build_verification(fields,\nraw_text)</div>
+    <div class="msg alt" style="left: 975px; top: 860px; width: 250px;">7. verification result</div>
+    <div class="msg" style="left: 1260px; top: 950px; width: 335px;">8. build_index_from_corpus + retrieve</div>
+    <div class="msg alt" style="left: 1260px; top: 1040px; width: 335px;">9. related corpus snippets</div>
+    <div class="msg" style="left: 1575px; top: 1130px; width: 275px;">10. run_external_verifications(fields)</div>
+    <div class="msg alt" style="left: 1575px; top: 1220px; width: 275px;">11. connector results</div>
+    <div class="msg" style="left: 1810px; top: 1310px; width: 330px;">12. generate_report_with_fallback(...)</div>
+    <div class="msg alt" style="left: 1810px; top: 1388px; width: 330px;">13. report text or fallback</div>
+    <div class="msg" style="left: 1810px; top: 1460px; width: 330px;">14. save_case(...)</div>
+
+    <div class="note bottom">Return payload from /upload: case_id, filename, verification, assessment, external_verification, resume_insights, report_generation, report, and OCR payload. The /report route uses the same pipeline but omits the OCR payload.</div>
+    <div class="legend">Sequence flow is shown left to right; dashed lines are lifelines, arrows are request and response steps.</div>
+
+    <svg viewBox="0 0 2200 1500" preserveAspectRatio="none">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#195c70"></path>
+        </marker>
+        <marker id="arrowDash" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#195c70"></path>
+        </marker>
+      </defs>
+      <line x1="160" y1="322" x2="410" y2="322" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+      <line x1="410" y1="422" x2="710" y2="422" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+      <line x1="710" y1="522" x2="710" y2="522" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+      <line x1="710" y1="620" x2="1010" y2="620" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+      <line x1="1010" y1="710" x2="710" y2="710" stroke="#195c70" stroke-width="4" stroke-dasharray="12 8" marker-end="url(#arrowDash)" />
+      <line x1="710" y1="800" x2="1010" y2="800" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+      <line x1="1010" y1="890" x2="710" y2="890" stroke="#195c70" stroke-width="4" stroke-dasharray="12 8" marker-end="url(#arrowDash)" />
+      <line x1="710" y1="980" x2="1310" y2="980" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+      <line x1="1310" y1="1070" x2="710" y2="1070" stroke="#195c70" stroke-width="4" stroke-dasharray="12 8" marker-end="url(#arrowDash)" />
+      <line x1="710" y1="1160" x2="1600" y2="1160" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+      <line x1="1600" y1="1250" x2="710" y2="1250" stroke="#195c70" stroke-width="4" stroke-dasharray="12 8" marker-end="url(#arrowDash)" />
+      <line x1="710" y1="1340" x2="1865" y2="1340" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+      <line x1="1865" y1="1418" x2="710" y2="1418" stroke="#195c70" stroke-width="4" stroke-dasharray="12 8" marker-end="url(#arrowDash)" />
+      <line x1="710" y1="1490" x2="2095" y2="1490" stroke="#195c70" stroke-width="4" marker-end="url(#arrow)" />
+    </svg>
+  </div>
+</body>
+</html>

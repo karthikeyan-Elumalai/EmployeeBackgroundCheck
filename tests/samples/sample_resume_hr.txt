@@ -1,0 +1,39 @@
+Full Name: Priya Raman
+Date of Birth: 14-08-1996
+Document Type: Resume
+ID Number: PR-829145
+Email: priya.raman@example.com
+Phone: +91-9876543210
+Address: 21 Lake View Road, Chennai, Tamil Nadu, India
+
+Professional Summary:
+Results-driven software engineer with 6 years of experience building backend services, data pipelines, and internal HR automation tools. Strong in Python, REST APIs, SQL, and cloud-native development.
+
+Education:
+B.E. Computer Science and Engineering, Anna University, 2018
+
+Employment History:
+1) Senior Software Engineer, NovaTech Solutions Pvt Ltd
+   Duration: Jan 2022 - Present
+   Employment Status: Active
+   Responsibilities:
+   - Led development of employee verification workflow APIs.
+   - Built fraud signal scoring engine and review queue tooling.
+   - Improved document processing turnaround time by 38%.
+
+2) Software Engineer, Apex Digital Systems
+   Duration: Jul 2018 - Dec 2021
+   Employment Status: Completed
+   Responsibilities:
+   - Developed OCR post-processing rules for identity documents.
+   - Built internal dashboards for HR analytics and case tracking.
+
+Skills:
+Python, FastAPI, SQL, PostgreSQL, Docker, Git, REST API Design
+
+Certifications:
+- AWS Certified Developer - Associate (2023)
+- Microsoft Azure Fundamentals (2022)
+
+References:
+Available on request

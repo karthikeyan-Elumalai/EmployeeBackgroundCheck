@@ -1,0 +1,21 @@
+Applicant Profile
+Email: candidate.noid@example.com
+Phone: +91-9000000000
+Address: Bengaluru, India
+
+Professional Summary:
+Backend engineer with 4 years of experience in APIs and data processing.
+
+Education:
+B.Tech Information Technology, 2020
+
+Employment History:
+Software Engineer, Delta Data Labs
+Duration: 2021 - Present
+Employment Status: Active
+
+Skills:
+Python, SQL, REST APIs, Docker
+
+Note:
+This sample intentionally omits required fields (Full Name, Date, ID Number) for validation testing.

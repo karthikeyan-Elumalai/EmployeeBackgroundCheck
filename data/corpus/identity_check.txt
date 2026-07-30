@@ -1,0 +1,5 @@
+Full Name: Alice Johnson
+Date of Birth: 09/15/2018
+Document Type: Driver License
+Driver License Number: D-334455
+State: California
